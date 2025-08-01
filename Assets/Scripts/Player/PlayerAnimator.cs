@@ -11,13 +11,22 @@ public class PlayerAnimator : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponent<Animator>();
-        _playerMovement.OnWalking += OnWalking;
 
-        OnWalking(_playerMovement.IsWalking);
+        OnWalking(_playerMovement.IsWalking.Value);
+    }
+
+    private void OnEnable()
+    {
+        _playerMovement.IsWalking.Changed += (_, isWalking) => OnWalking(isWalking);
+    }
+
+    private void OnDisable()
+    {
+        _playerMovement.IsWalking.Changed -= (_, isWalking) => OnWalking(isWalking);
     }
 
     private void OnWalking(bool isWalking)
     {
-        _animator.SetBool(IS_WALKING, _playerMovement.IsWalking);
+        _animator.SetBool(IS_WALKING, isWalking);
     }
 }
